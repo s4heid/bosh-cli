@@ -300,14 +300,15 @@ type InterpolateArgs struct {
 
 // Config
 type ConfigOpts struct {
-	Args ConfigArgs `positional-args:"true" required:"true"`
-	Name string     `long:"name" description:"Config name" default:"default"`
+	Args ConfigArgs `positional-args:"true"`
+	Name string     `long:"name" description:"Config name"`
+	Type string     `long:"type" description:"Config type"`
 
 	cmd
 }
 
 type ConfigArgs struct {
-	Type string `positional-arg-name:"TYPE" description:"Config type, e.g. 'cloud', 'runtime', or 'cpi'"`
+	ID string `positional-arg-name:"ID" description:"Config ID"`
 }
 
 type ConfigsOpts struct {
