@@ -16,6 +16,7 @@ func NewConfigCmd(ui boshui.UI, director boshdir.Director) ConfigCmd {
 }
 
 func (c ConfigCmd) Run(opts ConfigOpts) error {
+
 	if opts == (ConfigOpts{}) {
 		return bosherr.Error("Either <ID> or parameters --type and --name must be provided")
 	}
@@ -24,11 +25,19 @@ func (c ConfigCmd) Run(opts ConfigOpts) error {
 		return bosherr.Error("Can only specify one of ID or parameters '--type' and '--name'")
 	}
 
-	if (opts.Args.ID == "" && opts.Type != "" && opts.Name == "") || (opts.Args.ID == "" && opts.Name != "" && opts.Type == "")  {
+	if (opts.Args.ID == "" && opts.Type != "" && opts.Name == "") || (opts.Args.ID == "" && opts.Name != "" && opts.Type == "") {
 		return bosherr.Error("Need to specify both parameters '--type' and '--name'")
 	}
 
-	config, err := c.director.LatestConfig(opts.Type, opts.Name)
+	var config boshdir.Config
+	var err error
+
+	if opts.Args.ID != "" {
+		config, err = c.director.LatestConfigById(opts.Args.ID)
+	} else {
+		config, err = c.director.LatestConfig(opts.Type, opts.Name)
+	}
+
 	if err != nil {
 		return err
 	}

@@ -47,6 +47,31 @@ var _ = Describe("ConfigCmd", func() {
 
 		Context("when only ID is given", func() {
 
+			BeforeEach(func() {
+				opts = ConfigOpts{
+					Args: ConfigArgs{ID: "123"},
+				}
+			})
+
+			It("shows config if ID is correct", func() {
+				config := boshdir.Config{
+					Content: "some-content",
+				}
+
+				director.LatestConfigByIdReturns(config, nil)
+
+				err := act()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(ui.Blocks).To(Equal([]string{"some-content"}))
+			})
+
+			It("returns error if config cannot be retrieved", func() {
+				director.LatestConfigByIdReturns(boshdir.Config{}, errors.New("fake-err"))
+
+				err := act()
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring("fake-err"))
+			})
 		})
 
 		Context("when ID and type option is given", func() {
